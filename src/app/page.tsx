@@ -199,7 +199,7 @@ export default function HomePage() {
           </h2>
           <p className="text-sm text-zinc-400 mt-3 max-w-xl mx-auto">
             Explore the exact client-side neural vision pipelines, mathematical color harmony algorithms,
-            and single-device cloud security powering VaultStyle.
+            and single-device cloud security powering WardrobeLab.
           </p>
         </div>
 
@@ -272,7 +272,7 @@ export default function HomePage() {
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed mb-4">
               Strict ownership guarantee: The engine ONLY pairs clothes stored in your authenticated
-              Supabase wardrobe. Mathematical scoring from 0 to 100 based on color-theory principles.
+              wardrobe. Mathematical scoring from 0 to 100 based on color-theory principles.
             </p>
             <ul className="space-y-2 text-xs font-mono text-zinc-300">
               <li className="flex items-center gap-2">
@@ -358,7 +358,7 @@ export default function HomePage() {
             </span>
             <h4 className="text-xs font-bold font-mono text-white uppercase mb-1">Equip &amp; Fine-Tune</h4>
             <p className="text-[11px] text-zinc-400 leading-relaxed">
-              Click any item to dress the avatar instantly. Fine-tune scale and offset coordinates, synced directly to Supabase.
+              Click any item to dress the avatar instantly. Fine-tune scale and offset coordinates, synced directly to the cloud.
             </p>
           </div>
 

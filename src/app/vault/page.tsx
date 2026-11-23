@@ -35,9 +35,8 @@ import { AvatarUploadModal } from '@/components/AvatarUploadModal';
 import { GarmentScannerModal } from '@/components/GarmentScannerModal';
 import { SettingsModal } from '@/components/SettingsModal';
 import { InitialAvatarDialog } from '@/components/InitialAvatarDialog';
-import { OnboardingGuide } from '@/components/OnboardingGuide';
 import { SessionGuard } from '@/components/SessionGuard';
-import { RefreshCw, Zap, AlertCircle } from 'lucide-react';
+import { RefreshCw, Zap, Shirt, User, Eye, LayoutGrid } from 'lucide-react';
 
 export default function VaultPage() {
   const router = useRouter();
@@ -52,6 +51,9 @@ export default function VaultPage() {
   const [savedOutfits, setSavedOutfits] = useState<OutfitRecord[]>([]);
   const [equippedItems, setEquippedItems] = useState<WardrobeItemRecord[]>([]);
 
+  // Mobile viewport view: 'vault' (default on mobile), 'character', or 'split'
+  const [mobileView, setMobileView] = useState<'vault' | 'character' | 'split'>('vault');
+
   // Modals
   const [scannerOpen, setScannerOpen] = useState<boolean>(false);
   const [avatarModalOpen, setAvatarModalOpen] = useState<boolean>(false);
@@ -65,7 +67,7 @@ export default function VaultPage() {
   };
 
   /**
-   * Load User & Wardrobe Data on Mount
+   * Load User and Wardrobe Data on Mount
    */
   useEffect(() => {
     let isMounted = true;
@@ -84,14 +86,13 @@ export default function VaultPage() {
             setUserEmail(user.email ?? null);
           }
         } else {
-          // If no session, set guest/demo user ID
           if (isMounted) {
             setUserId(uid);
             setUserEmail('designer@wardrobelab.io');
           }
         }
 
-        // Fetch User's Data from Supabase
+        // Fetch User's Data
         const [activeAv, items, outfits] = await Promise.all([
           getActiveAvatar(uid).catch(() => null),
           getWardrobeItems(uid).catch(() => []),
@@ -124,12 +125,10 @@ export default function VaultPage() {
 
   /**
    * Equip or Swap Garment
-   * Strict Rule: Only 1 top, 1 bottom, 1 outerwear, 1 footwear, 1 accessory equipped at once.
    */
   const handleEquipItem = useCallback(
     (item: WardrobeItemRecord) => {
       setEquippedItems((prev) => {
-        // Remove existing item of same category
         let isSameCategory = (cat: GarmentCategory) => {
           if (item.category === 'shirt' || item.category === 'tshirt') {
             return cat === 'shirt' || cat === 'tshirt';
@@ -139,7 +138,6 @@ export default function VaultPage() {
 
         const filtered = prev.filter((i) => !isSameCategory(i.category));
 
-        // If the item doesn't have custom transforms yet, calculate default fit
         let fit = item.fit_transform;
         if (!fit || (fit.scale === 1 && fit.x === 0 && fit.y === 0)) {
           if (avatar) {
@@ -166,34 +164,30 @@ export default function VaultPage() {
    */
   const handleEquipOutfit = useCallback((items: WardrobeItemRecord[]) => {
     setEquippedItems(items);
-    showNotification('Outfit loadout equipped on avatar stage!');
+    showNotification('Outfit loadout equipped!');
   }, []);
 
   /**
-   * Update Fit Transform for Item & Persist to Supabase
+   * Update Fit Transform for Item and Persist
    */
   const handleUpdateItemFit = async (item: WardrobeItemRecord, newFit: FitTransform) => {
-    // 1. Update in local equipped state
     setEquippedItems((prev) =>
       prev.map((i) => (i.id === item.id ? { ...i, fit_transform: newFit } : i))
     );
-
-    // 2. Update in wardrobe list
     setWardrobe((prev) =>
       prev.map((i) => (i.id === item.id ? { ...i, fit_transform: newFit } : i))
     );
 
-    // 3. Persist to Supabase
     try {
       await updateWardrobeItemFit(item.id, newFit);
-      showNotification('Calibrated fit synced to Supabase Cloud!');
+      showNotification('Fit calibration saved!');
     } catch (e) {
       console.warn('Could not persist fit to cloud:', e);
     }
   };
 
   /**
-   * Handle Scanned Garment Save (Upload to Supabase Storage & DB)
+   * Handle Scanned Garment Save
    */
   const handleSaveScannedGarment = async (itemData: {
     name: string;
@@ -208,21 +202,18 @@ export default function VaultPage() {
   }) => {
     let imageUrl = '';
     try {
-      // 1. Upload to Supabase Storage
       imageUrl = await uploadToStorage(itemData.fileBlob, 'garments', userId);
     } catch (storageErr) {
       console.warn('Storage upload failed, using local object URL for session:', storageErr);
       imageUrl = URL.createObjectURL(itemData.fileBlob);
     }
 
-    // Compute initial auto-fit based on avatar landmarks
     const initialFit = avatar
       ? calculateAutoFitTransform(avatar.landmarks, itemData.category)
       : { scale: 1, scaleX: 1, scaleY: 1, x: 0, y: 0, rotation: 0 };
 
     let savedRecord: WardrobeItemRecord;
     try {
-      // 2. Insert into Supabase wardrobe_items table
       savedRecord = await saveWardrobeItem({
         userId,
         name: itemData.name,
@@ -237,7 +228,7 @@ export default function VaultPage() {
         fitTransform: initialFit,
       });
     } catch (dbErr) {
-      console.warn('Supabase DB insert failed, storing in local state:', dbErr);
+      console.warn('DB insert failed, storing in local state:', dbErr);
       savedRecord = {
         id: `garment_${Date.now()}`,
         user_id: userId,
@@ -257,13 +248,12 @@ export default function VaultPage() {
     }
 
     setWardrobe((prev) => [savedRecord, ...prev]);
-    // Auto equip newly scanned item
     handleEquipItem(savedRecord);
-    showNotification(`${savedRecord.name} scanned & saved to Vault!`);
+    showNotification(`${savedRecord.name} scanned and saved to Vault!`);
   };
 
   /**
-   * Handle Avatar Upload & Save (Upload to Supabase Storage & DB)
+   * Handle Avatar Upload and Save
    */
   const handleSaveAvatar = async (
     fileBlob: Blob,
@@ -289,7 +279,7 @@ export default function VaultPage() {
         height,
       });
     } catch (dbErr) {
-      console.warn('Supabase avatar insert failed, storing in local state:', dbErr);
+      console.warn('Avatar insert failed, storing in local state:', dbErr);
       savedAvatar = {
         id: `avatar_${Date.now()}`,
         user_id: userId,
@@ -303,7 +293,7 @@ export default function VaultPage() {
     }
 
     setAvatar(savedAvatar);
-    showNotification('New avatar calibrated & saved to Supabase!');
+    showNotification('New avatar calibrated and saved!');
   };
 
   /**
@@ -325,12 +315,12 @@ export default function VaultPage() {
       await deleteWardrobeItem(itemId);
       showNotification('Garment removed from Vault.');
     } catch (e) {
-      console.warn('Could not delete from Supabase:', e);
+      console.warn('Could not delete:', e);
     }
   };
 
   /**
-   * Save Outfit Loadout to Supabase
+   * Save Outfit Loadout
    */
   const handleSaveLoadout = async (outfit: {
     name: string;
@@ -349,7 +339,7 @@ export default function VaultPage() {
         styleVibe: outfit.styleVibe,
       });
       setSavedOutfits((prev) => [saved, ...prev]);
-      showNotification('Outfit loadout saved to Supabase!');
+      showNotification('Outfit loadout saved!');
     } catch (err) {
       console.warn('Could not save outfit to DB, storing locally:', err);
       const fallbackOutfit: OutfitRecord = {
@@ -376,7 +366,7 @@ export default function VaultPage() {
       await deleteOutfit(outfitId);
       showNotification('Outfit loadout deleted.');
     } catch (e) {
-      console.warn('Could not delete outfit from Supabase:', e);
+      console.warn('Could not delete outfit:', e);
     }
   };
 
@@ -387,15 +377,15 @@ export default function VaultPage() {
           <RefreshCw className="w-6 h-6 animate-spin" />
         </div>
         <p className="font-mono text-xs uppercase tracking-widest text-zinc-300">
-          Synchronizing Tactical Vault...
+          Synchronizing Vault...
         </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#09090B] text-zinc-100 flex flex-col relative overflow-x-hidden">
-      {/* Single Active Session Guard (Auto log out previous device if logged into another) */}
+    <div className="h-screen bg-[#09090B] text-zinc-100 flex flex-col relative overflow-hidden select-none">
+      {/* Single Active Session Guard */}
       <SessionGuard userId={userId} />
 
       {/* Top Navigation */}
@@ -407,39 +397,136 @@ export default function VaultPage() {
 
       {/* Floating Notification Toast */}
       {notification && (
-        <div className="fixed top-16 right-6 z-50 px-4 py-2.5 rounded-xl bg-zinc-900 border border-amber-500/40 text-amber-300 text-xs font-mono shadow-2xl backdrop-blur-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+        <div className="fixed top-16 right-4 sm:right-6 z-50 px-4 py-2.5 rounded-xl bg-zinc-900 border border-amber-500/40 text-amber-300 text-xs font-mono shadow-2xl backdrop-blur-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
           <Zap className="w-3.5 h-3.5 text-amber-400" />
           <span>{notification}</span>
         </div>
       )}
 
-      {/* Main Studio Viewport */}
-      <main className="flex-1 w-full max-w-[1700px] mx-auto p-3 sm:p-5 flex flex-col">
-        {/* Onboarding Guide (Displays for new users) */}
-        <OnboardingGuide
-          hasAvatar={!!avatar}
-          garmentCount={wardrobe.length}
-          onOpenAvatarUpload={() => setAvatarModalOpen(true)}
-          onOpenScanner={() => setScannerOpen(true)}
-        />
+      {/* MOBILE SEGMENTED VIEW SWITCHER (< lg screens) */}
+      <div className="lg:hidden flex items-center justify-between px-3 py-2 bg-[#09090b] border-b border-white/10 z-20 flex-shrink-0">
+        <div className="flex items-center bg-black/60 p-0.5 rounded-xl border border-white/10 text-xs font-mono">
+          <button
+            onClick={() => setMobileView('vault')}
+            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
+              mobileView === 'vault'
+                ? 'bg-amber-400 text-zinc-950 font-bold shadow-md shadow-amber-400/20'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <Shirt className="w-3.5 h-3.5" />
+            <span>Vault ({wardrobe.length})</span>
+          </button>
 
-        {/* Free Fire Vault Split-Screen Paradigm */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-          {/* Left Stage (45% on Desktop): Interactive Avatar Studio */}
-          <div className="lg:col-span-5 xl:col-span-5 h-[620px] lg:h-full min-h-[620px]">
-            <AvatarStage
-              avatar={avatar}
-              equippedItems={equippedItems}
-              onUnequip={handleUnequipItem}
-              onClearAll={handleClearAllEquipped}
-              onOpenAvatarUpload={() => setInitialAvatarOpen(true)}
-              onUpdateItemFit={handleUpdateItemFit}
-              onUseMannequin={handleUseMannequin}
-            />
-          </div>
+          <button
+            onClick={() => setMobileView('character')}
+            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
+              mobileView === 'character'
+                ? 'bg-amber-400 text-zinc-950 font-bold shadow-md shadow-amber-400/20'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <User className="w-3.5 h-3.5" />
+            <span>Character</span>
+            {equippedItems.length > 0 && (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-0.5 animate-pulse" />
+            )}
+          </button>
 
-          {/* Right Panel (55% on Desktop): Categorized Wardrobe Vault */}
-          <div className="lg:col-span-7 xl:col-span-7 h-full flex flex-col">
+          <button
+            onClick={() => setMobileView('split')}
+            className={`hidden sm:flex px-2.5 py-1.5 rounded-lg items-center gap-1 transition-all ${
+              mobileView === 'split'
+                ? 'bg-amber-400 text-zinc-950 font-bold shadow-md shadow-amber-400/20'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <LayoutGrid className="w-3.5 h-3.5" />
+            <span>Split</span>
+          </button>
+        </div>
+
+        {/* Quick Equipped Badge */}
+        <div className="text-[11px] font-mono text-zinc-400 flex items-center gap-1.5">
+          <span className="text-amber-400 font-bold">{equippedItems.length}</span>
+          <span className="text-zinc-500">Equipped</span>
+        </div>
+      </div>
+
+      {/* ============================================================
+          VAULT LAYOUT ENGINE:
+          DESKTOP (lg:flex): Free Fire 3-Panel Side-by-Side:
+            LEFT   = Character/Avatar Stage (~35%, max 480px)
+            CENTER = Item Grid (WardrobeVault component, ~50%)
+            RIGHT  = Vertical Category Tabs (inside WardrobeVault, ~15%)
+          
+          MOBILE (< lg):
+            Responsive mode switcher:
+              'vault'     = Full-height Free Fire grid + floating Avatar PIP
+              'character' = Full-height Avatar stage + floating 'Open Vault' pill
+              'split'     = Top avatar stage (38vh) + bottom grid (flex-1)
+          ============================================================ */}
+      <main className="flex-1 flex overflow-hidden relative">
+        {/* DESKTOP LEFT: Character Stage */}
+        <div className="w-[35%] min-w-[300px] max-w-[480px] border-r border-white/5 flex-shrink-0 hidden lg:flex">
+          <AvatarStage
+            avatar={avatar}
+            equippedItems={equippedItems}
+            onUnequip={handleUnequipItem}
+            onClearAll={handleClearAllEquipped}
+            onOpenAvatarUpload={() => setInitialAvatarOpen(true)}
+            onUpdateItemFit={handleUpdateItemFit}
+            onUseMannequin={handleUseMannequin}
+          />
+        </div>
+
+        {/* DESKTOP CENTER+RIGHT / MOBILE DYNAMIC VIEW */}
+        <div className="flex-1 flex flex-col min-w-0 bg-[#0c0d12] relative overflow-hidden">
+          {/* MOBILE: Split View Mode */}
+          {mobileView === 'split' && (
+            <div className="lg:hidden h-[38vh] min-h-[260px] border-b border-white/5 flex-shrink-0">
+              <AvatarStage
+                avatar={avatar}
+                equippedItems={equippedItems}
+                onUnequip={handleUnequipItem}
+                onClearAll={handleClearAllEquipped}
+                onOpenAvatarUpload={() => setInitialAvatarOpen(true)}
+                onUpdateItemFit={handleUpdateItemFit}
+                onUseMannequin={handleUseMannequin}
+              />
+            </div>
+          )}
+
+          {/* MOBILE: Character Stage Mode (Full Screen) */}
+          {mobileView === 'character' && (
+            <div className="lg:hidden flex-1 flex flex-col min-h-0 relative">
+              <AvatarStage
+                avatar={avatar}
+                equippedItems={equippedItems}
+                onUnequip={handleUnequipItem}
+                onClearAll={handleClearAllEquipped}
+                onOpenAvatarUpload={() => setInitialAvatarOpen(true)}
+                onUpdateItemFit={handleUpdateItemFit}
+                onUseMannequin={handleUseMannequin}
+              />
+
+              {/* Floating Action: Open Vault Items */}
+              <button
+                onClick={() => setMobileView('vault')}
+                className="absolute bottom-16 right-4 z-30 px-4 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold font-mono text-xs uppercase tracking-wider flex items-center gap-2 shadow-2xl shadow-amber-400/30 active:scale-95 transition-all"
+              >
+                <Shirt className="w-4 h-4" />
+                <span>Browse Vault Grid</span>
+              </button>
+            </div>
+          )}
+
+          {/* VAULT GRID VIEW (Desktop always visible, mobile visible when 'vault' or 'split') */}
+          <div
+            className={`flex-1 flex min-h-0 ${
+              mobileView === 'character' ? 'hidden lg:flex' : 'flex'
+            }`}
+          >
             <WardrobeVault
               wardrobe={wardrobe}
               savedOutfits={savedOutfits}
@@ -453,11 +540,39 @@ export default function VaultPage() {
               onOpenScanner={() => setScannerOpen(true)}
             />
           </div>
+
+          {/* MOBILE: Floating Avatar Quick-Preview PIP on 'vault' view */}
+          {mobileView === 'vault' && (
+            <button
+              onClick={() => setMobileView('character')}
+              title="Tap to view full Character Stage"
+              className="lg:hidden fixed bottom-4 left-4 z-40 p-2 pr-3 rounded-2xl bg-zinc-900/95 border border-amber-500/40 shadow-2xl backdrop-blur-xl flex items-center gap-2.5 text-xs font-mono text-white active:scale-95 transition-all hover:border-amber-400 ring-1 ring-amber-400/20"
+            >
+              <div className="w-8 h-8 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                {avatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={avatar.image_url}
+                    alt="Avatar"
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <User className="w-4 h-4 text-amber-400" />
+                )}
+              </div>
+              <div className="text-left">
+                <div className="text-[10px] text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                  <span>View Stage</span>
+                  <Eye className="w-3 h-3" />
+                </div>
+                <div className="text-[9px] text-zinc-400">{equippedItems.length} active</div>
+              </div>
+            </button>
+          )}
         </div>
       </main>
 
       {/* Modals */}
-      {/* 1. Initial Avatar Choice Dialog (First-time user onboarding) */}
       <InitialAvatarDialog
         isOpen={initialAvatarOpen && !avatar}
         onOpenUpload={() => {
@@ -470,7 +585,6 @@ export default function VaultPage() {
         }}
       />
 
-      {/* 2. Studio Settings Modal (Change avatar, preferences, account) */}
       <SettingsModal
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
@@ -481,7 +595,6 @@ export default function VaultPage() {
         onClearEquipped={handleClearAllEquipped}
       />
 
-      {/* 3. Avatar Upload & MediaPipe Calibration Modal */}
       <AvatarUploadModal
         userId={userId}
         isOpen={avatarModalOpen}
@@ -489,7 +602,6 @@ export default function VaultPage() {
         onSaveAvatar={handleSaveAvatar}
       />
 
-      {/* 4. Garment Scanner Modal */}
       <GarmentScannerModal
         userId={userId}
         isOpen={scannerOpen}

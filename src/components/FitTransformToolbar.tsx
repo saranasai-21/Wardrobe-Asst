@@ -31,7 +31,7 @@ export function FitTransformToolbar({
   };
 
   return (
-    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 w-[92%] max-w-md bg-zinc-900/90 border border-white/10 rounded-2xl p-4 backdrop-blur-xl shadow-2xl shadow-black/80 text-xs">
+    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 w-[94%] max-w-md max-h-[80vh] overflow-y-auto bg-zinc-900/95 border border-white/10 rounded-2xl p-4 backdrop-blur-xl shadow-2xl shadow-black/80 text-xs">
       <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-white/5">
         <div className="flex items-center gap-2">
           <Sliders className="w-3.5 h-3.5 text-amber-400" />

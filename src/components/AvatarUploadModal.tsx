@@ -92,7 +92,7 @@ export function AvatarUploadModal({
       setProgressPct(90);
 
       // 3. Upload & Save to Supabase
-      setProcessingStep('Uploading avatar & pose anchors to Supabase...');
+      setProcessingStep('Uploading avatar & calibrating pose anchors...');
       await onSaveAvatar(
         finalBlob,
         landmarks,

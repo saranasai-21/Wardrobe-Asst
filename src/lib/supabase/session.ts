@@ -9,7 +9,7 @@ import { createClient } from './client';
 import { UserSessionRecord } from '@/types/database';
 
 const SESSION_COOKIE_NAME = 'vault_session_id';
-const BROADCAST_CHANNEL_NAME = 'vaultstyle_session_sync';
+const BROADCAST_CHANNEL_NAME = 'wardrobelab_session_sync';
 
 /**
  * Generate a cryptographically secure random session ID

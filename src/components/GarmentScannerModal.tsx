@@ -183,7 +183,7 @@ export function GarmentScannerModal({
       onClose();
     } catch (err: any) {
       console.error('Save to vault error:', err);
-      setErrorMsg(err.message || 'Failed to sync garment to Supabase.');
+      setErrorMsg(err.message || 'Failed to sync garment to cloud.');
     } finally {
       setSavingToCloud(false);
     }
@@ -458,7 +458,7 @@ export function GarmentScannerModal({
                 {savingToCloud ? (
                   <>
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    <span>Syncing to Supabase...</span>
+                    <span>Syncing to cloud...</span>
                   </>
                 ) : (
                   <>

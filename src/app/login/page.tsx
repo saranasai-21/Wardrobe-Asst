@@ -90,7 +90,7 @@ function LoginForm() {
         process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('placeholder')
       ) {
         setErrorMsg(
-          'Supabase connection not yet configured or unreachable. Add your NEXT_PUBLIC_SUPABASE_URL & ANON_KEY to .env.local to persist cloud data!'
+          'Cloud connection not yet configured or unreachable. Please check your environment settings.'
         );
       } else {
         setErrorMsg(err.message || 'An error occurred during authentication.');

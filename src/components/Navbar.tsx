@@ -47,7 +47,7 @@ export function Navbar({
 
         <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/5 text-[10px] font-mono text-zinc-400">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span>Cloud Sync Active</span>
+          <span>Online</span>
         </div>
       </div>
 
