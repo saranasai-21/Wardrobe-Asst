@@ -57,7 +57,7 @@ export default function HomePage() {
         {/* Architecture Badges */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-amber-400 font-mono mb-6 backdrop-blur-md">
           <Crosshair className="w-3.5 h-3.5" />
-          <span>Zero-API Browser AI &bull; Strict Texture Lock &bull; Supabase RLS</span>
+          <span>Zero-API Browser AI &bull; Strict Texture Lock &bull; Private Cloud Sync</span>
         </div>
 
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white font-mono leading-[1.1]">
@@ -300,24 +300,24 @@ export default function HomePage() {
               <Smartphone className="w-6 h-6" />
             </div>
             <h3 className="text-lg font-bold font-mono text-white mb-2">
-              4. Always-On Session &amp; Single Active Device
+              4. Private Cloud Sync &amp; Multi-Device Protection
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-              Enterprise security with Supabase Row-Level Security (RLS) isolating your wardrobe.
-              Stay permanently logged in on your primary device, with automated concurrent session invalidation.
+              Encrypted cloud synchronization isolating your private wardrobe.
+              Stay logged in seamlessly with automatic protection against unauthorized simultaneous logins.
             </p>
             <ul className="space-y-2 text-xs font-mono text-zinc-300">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
-                <span>1-Year persistent session cookies with automatic Next.js token refresh.</span>
+                <span>Persistent authentication keeps your session ready across browser restarts.</span>
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
-                <span>Instant kickout: Logging into Device B invalidates Device A via Realtime WebSockets.</span>
+                <span>Device protection: Logging in on another device securely protects your account.</span>
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
-                <span>PostgreSQL RLS ensures complete isolation between user wardrobes.</span>
+                <span>End-to-end user isolation ensures complete privacy for your clothing collection.</span>
               </li>
             </ul>
           </div>

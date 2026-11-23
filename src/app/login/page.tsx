@@ -134,7 +134,7 @@ function LoginForm() {
             <Smartphone className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-bold font-mono uppercase tracking-wider text-amber-200">
-                Single Active Session Rule
+                Account Security Notice
               </p>
               <p className="mt-1 text-zinc-300 leading-relaxed">
                 You were automatically signed out because your account was logged into from another
@@ -251,26 +251,6 @@ function LoginForm() {
             )}
           </button>
         </form>
-
-        {/* Feature badges */}
-        <div className="mt-8 pt-6 border-t border-white/5 grid grid-cols-3 gap-2 text-center">
-          <div className="p-2 rounded-lg bg-white/[0.02]">
-            <p className="text-[10px] text-zinc-500 font-mono">Session</p>
-            <p className="text-xs font-semibold text-zinc-300 mt-0.5">Always On</p>
-          </div>
-          <div className="p-2 rounded-lg bg-white/[0.02]">
-            <p className="text-[10px] text-zinc-500 font-mono">Active Device</p>
-            <p className="text-xs font-semibold text-zinc-300 mt-0.5">Single Active</p>
-          </div>
-          <div className="p-2 rounded-lg bg-white/[0.02]">
-            <p className="text-[10px] text-zinc-500 font-mono">Cloud Sync</p>
-            <p className="text-xs font-semibold text-zinc-300 mt-0.5">Postgres RLS</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="z-10 mt-6 text-center text-xs text-zinc-500">
-        Protected with PostgreSQL Row-Level Security &amp; Encrypted Persistent Cookies.
       </div>
     </div>
   );
