@@ -16,6 +16,7 @@ import {
   EyeOff,
   LogOut,
   Smartphone,
+  User,
 } from 'lucide-react';
 
 function LoginForm() {
@@ -34,6 +35,12 @@ function LoginForm() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const supabase = createClient();
+
+  const handleGuestAccess = () => {
+    document.cookie = 'vault_guest_mode=true; path=/; max-age=86400; SameSite=Lax';
+    router.push(redirectedFrom);
+    router.refresh();
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -245,6 +252,22 @@ function LoginForm() {
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
+          </button>
+
+          <div className="relative my-4 flex items-center justify-center">
+            <div className="border-t border-white/10 w-full" />
+            <span className="bg-zinc-900 px-3 text-[10px] font-mono uppercase tracking-wider text-zinc-500">
+              Or Instant Access
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGuestAccess}
+            className="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-amber-400 font-mono font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+          >
+            <User className="w-3.5 h-3.5" />
+            <span>Continue as Guest Designer</span>
           </button>
         </form>
       </div>

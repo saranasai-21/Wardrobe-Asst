@@ -5,17 +5,18 @@ import {
   AvatarRecord,
   WardrobeItemRecord,
   FitTransform,
-  GarmentCategory,
 } from '@/types/database';
 import { calculateAutoFitTransform } from '@/lib/pose';
-import { DEFAULT_MANNEQUIN_SVG } from '@/lib/mannequin';
 import { FitTransformToolbar } from './FitTransformToolbar';
+import { Avatar3DStage } from './Avatar3DStage';
 import {
   Download,
   Trash2,
   Sliders,
   User,
   RefreshCw,
+  Box,
+  Image as ImageIcon,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -43,6 +44,7 @@ export function AvatarStage({
   const [currentTransform, setCurrentTransform] = useState<FitTransform | null>(null);
   const [savingFit, setSavingFit] = useState(false);
   const [downloadingSnapshot, setDownloadingSnapshot] = useState(false);
+  const [renderMode, setRenderMode] = useState<'3d' | '2d'>('3d');
 
   // Group equipped items by strict rendering order
   const bottoms = equippedItems.find((i) => i.category === 'bottom');
@@ -189,7 +191,7 @@ export function AvatarStage({
   };
 
   /**
-   * Helper to compute CSS style for an equipped garment layer
+   * Helper to compute CSS style for 2D garment layer
    */
   const getGarmentStyle = (item: WardrobeItemRecord) => {
     const t = item.id === selectedItemForEdit?.id && currentTransform ? currentTransform : item.fit_transform;
@@ -225,61 +227,100 @@ export function AvatarStage({
       ref={containerRef}
       className="relative w-full h-full bg-gradient-to-b from-[#121216] via-[#0d0d10] to-[#09090b] overflow-hidden flex flex-col justify-between select-none"
     >
+      {/* Top 3D / 2D View Switcher Pill */}
+      <div className="absolute top-3 right-3 z-30 flex items-center bg-black/70 backdrop-blur-md p-0.5 rounded-xl border border-white/10 text-[10px] font-mono">
+        <button
+          onClick={() => setRenderMode('3d')}
+          className={`px-2.5 py-1 rounded-lg flex items-center gap-1 transition-all ${
+            renderMode === '3d'
+              ? 'bg-amber-400 text-zinc-950 font-bold shadow-sm'
+              : 'text-zinc-400 hover:text-white'
+          }`}
+        >
+          <Box className="w-3 h-3" />
+          <span>3D Rotatable</span>
+        </button>
+        <button
+          onClick={() => setRenderMode('2d')}
+          className={`px-2.5 py-1 rounded-lg flex items-center gap-1 transition-all ${
+            renderMode === '2d'
+              ? 'bg-amber-400 text-zinc-950 font-bold shadow-sm'
+              : 'text-zinc-400 hover:text-white'
+          }`}
+        >
+          <ImageIcon className="w-3 h-3" />
+          <span>2D Photo</span>
+        </button>
+      </div>
+
       {/* Main Viewport Stage */}
       <div className="relative flex-1 w-full flex items-center justify-center overflow-hidden">
         {/* Background Spotlight Radial */}
         <div className="absolute inset-0 bg-spotlight-radial pointer-events-none" />
 
-        {/* Studio Pedestal Floor Reflection */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[75%] max-w-[380px] h-16 bg-pedestal-gradient rounded-full blur-[2px] pointer-events-none" />
-        <div className="absolute bottom-9 left-1/2 -translate-x-1/2 w-[60%] max-w-[300px] h-5 border-b border-amber-500/20 rounded-full pointer-events-none" />
-
-        {avatar ? (
-          <div className="relative h-[90%] aspect-[9/16] flex items-center justify-center">
-            {/* 1. Base Avatar Image */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={avatar.image_url}
-              alt="Avatar Model"
-              className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10 drop-shadow-[0_20px_35px_rgba(0,0,0,0.85)]"
-            />
-
-            {/* 2-6. Layered Garments in order */}
-            {renderGarmentLayer(bottoms, 'z-20')}
-            {renderGarmentLayer(tops, 'z-30')}
-            {renderGarmentLayer(outerwear, 'z-[40]')}
-            {renderGarmentLayer(footwear, 'z-50')}
-            {renderGarmentLayer(accessories, 'z-[60]')}
-          </div>
+        {renderMode === '3d' ? (
+          // 3D ROTATABLE WEBGL MANNEQUIN STAGE
+          <Avatar3DStage
+            avatar={avatar}
+            equippedItems={equippedItems}
+            onSelectGarment={handleSelectGarmentForTuning}
+            selectedItemId={selectedItemForEdit?.id}
+          />
         ) : (
-          /* Empty Avatar State */
-          <div className="z-10 flex flex-col items-center justify-center text-center p-6 max-w-xs">
-            <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-amber-400 shadow-xl">
-              <User className="w-7 h-7" />
-            </div>
-            <h3 className="text-sm font-bold text-white font-mono uppercase tracking-wide">
-              No Avatar
-            </h3>
-            <p className="text-[11px] text-zinc-400 mt-2 leading-relaxed">
-              Upload a full-body photo or load the Studio Mannequin to start styling.
-            </p>
-            <div className="flex flex-col items-center gap-2 mt-4 w-full">
-              <button
-                onClick={onOpenAvatarUpload}
-                className="w-full px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-zinc-950 font-bold text-xs tracking-wider uppercase font-mono transition-all shadow-lg shadow-amber-500/20"
-              >
-                Upload Photo
-              </button>
-              {onUseMannequin && (
-                <button
-                  onClick={onUseMannequin}
-                  className="w-full px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-amber-400 font-mono text-xs border border-white/10 transition-colors hover:border-amber-400/40"
-                >
-                  Use Mannequin
-                </button>
-              )}
-            </div>
-          </div>
+          // 2D PRECISION CALIBRATION VIEW
+          <>
+            {/* Studio Pedestal Floor Reflection */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[75%] max-w-[380px] h-16 bg-pedestal-gradient rounded-full blur-[2px] pointer-events-none" />
+            <div className="absolute bottom-9 left-1/2 -translate-x-1/2 w-[60%] max-w-[300px] h-5 border-b border-amber-500/20 rounded-full pointer-events-none" />
+
+            {avatar ? (
+              <div className="relative h-[90%] aspect-[9/16] flex items-center justify-center">
+                {/* 1. Base Avatar Image */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={avatar.image_url}
+                  alt="Avatar Model"
+                  className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10 drop-shadow-[0_20px_35px_rgba(0,0,0,0.85)]"
+                />
+
+                {/* 2-6. Layered Garments */}
+                {renderGarmentLayer(bottoms, 'z-20')}
+                {renderGarmentLayer(tops, 'z-30')}
+                {renderGarmentLayer(outerwear, 'z-[40]')}
+                {renderGarmentLayer(footwear, 'z-50')}
+                {renderGarmentLayer(accessories, 'z-[60]')}
+              </div>
+            ) : (
+              /* Empty Avatar State */
+              <div className="z-10 flex flex-col items-center justify-center text-center p-6 max-w-xs">
+                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-amber-400 shadow-xl">
+                  <User className="w-7 h-7" />
+                </div>
+                <h3 className="text-sm font-bold text-white font-mono uppercase tracking-wide">
+                  No Avatar Loaded
+                </h3>
+                <p className="text-[11px] text-zinc-400 mt-2 leading-relaxed">
+                  Upload a photo or load the Studio Mannequin.
+                </p>
+                <div className="flex flex-col items-center gap-2 mt-4 w-full">
+                  <button
+                    onClick={onOpenAvatarUpload}
+                    className="w-full px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-zinc-950 font-bold text-xs tracking-wider uppercase font-mono transition-all shadow-lg shadow-amber-500/20"
+                  >
+                    Upload Photo
+                  </button>
+                  {onUseMannequin && (
+                    <button
+                      onClick={onUseMannequin}
+                      className="w-full px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-amber-400 font-mono text-xs border border-white/10 transition-colors hover:border-amber-400/40"
+                    >
+                      Use Mannequin
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* Floating Calibration Toolbar if an item is selected */}

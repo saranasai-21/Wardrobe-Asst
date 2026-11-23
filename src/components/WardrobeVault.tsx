@@ -7,15 +7,12 @@ import {
   GarmentCategory,
 } from '@/types/database';
 import { OutfitGeneratorPanel } from './OutfitGeneratorPanel';
+import { HallOfArmorOutfits } from './HallOfArmorOutfits';
 import {
   Plus,
   Trash2,
   Check,
   Shirt,
-  Layers,
-  Bookmark,
-  ChevronRight,
-  Palette,
   Search,
   X,
 } from 'lucide-react';
@@ -198,22 +195,6 @@ export function WardrobeVault({
     }
   };
 
-  const handleDeleteOutfit = async (e: React.MouseEvent, outfitId: string) => {
-    e.stopPropagation();
-    if (!confirm('Delete this saved loadout?')) return;
-    setDeletingId(outfitId);
-    try {
-      await onDeleteOutfit(outfitId);
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
-  const handleEquipSavedOutfit = (outfit: OutfitRecord) => {
-    const outfitItems = wardrobe.filter((item) => outfit.item_ids.includes(item.id));
-    onEquipOutfit(outfitItems);
-  };
-
   // Rarity accent line color
   const getRarityColor = (vibe: string) => {
     switch (vibe?.toLowerCase()) {
@@ -318,81 +299,17 @@ export function WardrobeVault({
             />
           )}
 
-          {/* TAB: SAVED OUTFITS */}
+          {/* TAB: SAVED OUTFITS - IRON MAN HALL OF ARMOR SUIT CHAMBERS */}
           {mainTab === 'outfits' && (
-            <div className="space-y-3">
-              {savedOutfits.length === 0 ? (
-                <div className="p-8 text-center flex flex-col items-center justify-center">
-                  <Bookmark className="w-10 h-10 text-zinc-600 mb-3" />
-                  <h4 className="text-sm font-bold font-mono uppercase text-white">
-                    No Saved Loadouts
-                  </h4>
-                  <p className="text-xs text-zinc-400 mt-1 max-w-xs leading-relaxed">
-                    Generate outfits with Stylist AI and save your loadouts here.
-                  </p>
-                  <button
-                    onClick={() => setMainTab('generator')}
-                    className="mt-4 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-mono font-bold"
-                  >
-                    Open Stylist AI
-                  </button>
-                </div>
-              ) : (
-                savedOutfits.map((outfit) => {
-                  const outfitItems = wardrobe.filter((i) => outfit.item_ids.includes(i.id));
-                  return (
-                    <div
-                      key={outfit.id}
-                      className="p-3.5 rounded-xl bg-zinc-900/80 border border-white/10 hover:border-amber-400/50 transition-all flex items-center justify-between gap-3"
-                    >
-                      <div className="space-y-1.5 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold font-mono text-white truncate">
-                            {outfit.name}
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full text-[9px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/20 flex-shrink-0">
-                            {outfit.score}% Match
-                          </span>
-                        </div>
-                        {/* Garment previews */}
-                        <div className="flex items-center gap-1.5">
-                          {outfitItems.map((item) => (
-                            <div
-                              key={item.id}
-                              className="w-10 h-10 bg-black/50 rounded-lg border border-white/5 p-1 flex items-center justify-center overflow-hidden"
-                            >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={item.image_url}
-                                alt={item.name}
-                                className="max-h-full max-w-full object-contain"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <button
-                          onClick={(e) => handleDeleteOutfit(e, outfit.id)}
-                          disabled={deletingId === outfit.id}
-                          className="p-2 rounded-lg bg-white/5 hover:bg-red-500/20 text-zinc-500 hover:text-red-400 transition-colors"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleEquipSavedOutfit(outfit)}
-                          className="px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold font-mono text-xs flex items-center gap-1 shadow-md shadow-amber-500/20"
-                        >
-                          <span>Equip</span>
-                          <ChevronRight className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
+            <HallOfArmorOutfits
+              savedOutfits={savedOutfits}
+              wardrobe={wardrobe}
+              equippedItems={equippedItems}
+              onEquipOutfit={onEquipOutfit}
+              onDeleteOutfit={onDeleteOutfit}
+              onOpenStylist={() => setMainTab('generator')}
+              onOpenScanner={onOpenScanner}
+            />
           )}
 
           {/* TAB: FASHION (Free Fire 3-Column Grid) */}

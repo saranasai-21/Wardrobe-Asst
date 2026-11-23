@@ -62,8 +62,10 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protect /vault routes
-  if (request.nextUrl.pathname.startsWith('/vault') && !user) {
+  const isGuestMode = request.cookies.get('vault_guest_mode')?.value === 'true';
+
+  // Protect /vault routes unless user is authenticated or continuing in guest studio mode
+  if (request.nextUrl.pathname.startsWith('/vault') && !user && !isGuestMode) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     url.searchParams.set('redirectedFrom', request.nextUrl.pathname);
