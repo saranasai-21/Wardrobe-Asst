@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { clearLocalSessionId } from '@/lib/supabase/session';
 import {
-  Sparkles,
   LogOut,
   User,
   Plus,

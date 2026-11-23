@@ -9,7 +9,6 @@ import {
 } from '@/types/database';
 import { generateOutfitsFromWardrobe, OutfitFilter } from '@/lib/outfitEngine';
 import {
-  Sparkles,
   Check,
   Bookmark,
   Layers,
@@ -92,7 +91,7 @@ export function OutfitGeneratorPanel({
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
         <div>
           <h3 className="text-sm font-bold font-mono uppercase tracking-wider text-white flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-amber-400" />
+            <Palette className="w-4 h-4 text-amber-400" />
             <span>Deterministic Outfit Stylist</span>
           </h3>
           <p className="text-[11px] text-zinc-400">

@@ -35,7 +35,7 @@ import { AvatarUploadModal } from '@/components/AvatarUploadModal';
 import { GarmentScannerModal } from '@/components/GarmentScannerModal';
 import { OnboardingGuide } from '@/components/OnboardingGuide';
 import { SessionGuard } from '@/components/SessionGuard';
-import { RefreshCw, Sparkles, AlertCircle } from 'lucide-react';
+import { RefreshCw, Zap, AlertCircle } from 'lucide-react';
 
 export default function VaultPage() {
   const router = useRouter();
@@ -401,7 +401,7 @@ export default function VaultPage() {
       {/* Floating Notification Toast */}
       {notification && (
         <div className="fixed top-16 right-6 z-50 px-4 py-2.5 rounded-xl bg-zinc-900 border border-amber-500/40 text-amber-300 text-xs font-mono shadow-2xl backdrop-blur-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <Zap className="w-3.5 h-3.5 text-amber-400" />
           <span>{notification}</span>
         </div>
       )}

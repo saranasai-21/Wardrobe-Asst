@@ -14,7 +14,6 @@ import {
   Download,
   Trash2,
   Sliders,
-  Sparkles,
   User,
   Check,
   RefreshCw,

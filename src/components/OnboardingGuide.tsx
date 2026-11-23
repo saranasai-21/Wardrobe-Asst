@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { User, Sparkles, Shirt, X, ArrowRight } from 'lucide-react';
+import { User, Zap, Shirt, X, ArrowRight } from 'lucide-react';
 
 interface OnboardingGuideProps {
   hasAvatar: boolean;
@@ -28,7 +28,7 @@ export function OnboardingGuide({
       <div className="flex items-start justify-between">
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[10px] font-mono uppercase tracking-wider mb-2">
-            <Sparkles className="w-3 h-3" />
+            <Zap className="w-3 h-3" />
             <span>Vault Quickstart Protocol</span>
           </div>
           <h3 className="text-sm sm:text-base font-bold font-mono text-white">

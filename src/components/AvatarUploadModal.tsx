@@ -8,7 +8,6 @@ import {
   Upload,
   Camera,
   X,
-  Sparkles,
   Check,
   AlertCircle,
   RefreshCw,

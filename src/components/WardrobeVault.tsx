@@ -11,7 +11,6 @@ import {
   Plus,
   Trash2,
   Check,
-  Sparkles,
   Shirt,
   Layers,
   Bookmark,
@@ -59,7 +58,7 @@ const TABS: { id: VaultTab; label: string; icon: any; countKey?: string }[] = [
   { id: 'footwear', label: 'Footwear', icon: Layers },
   { id: 'accessories', label: 'Accessories', icon: Layers },
   { id: 'saved_outfits', label: 'Saved Outfits', icon: Bookmark },
-  { id: 'generator', label: 'Stylist AI', icon: Sparkles },
+  { id: 'generator', label: 'Stylist AI', icon: Palette },
 ];
 
 export function WardrobeVault({

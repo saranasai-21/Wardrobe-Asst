@@ -14,7 +14,7 @@ import { classifyGarment } from '@/lib/classifier';
 import {
   Upload,
   X,
-  Sparkles,
+  Crosshair,
   Check,
   AlertCircle,
   RefreshCw,
@@ -196,7 +196,7 @@ export function GarmentScannerModal({
         <div className="flex items-center justify-between pb-4 border-b border-white/5">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <Sparkles className="w-4 h-4" />
+              <Crosshair className="w-4 h-4" />
             </div>
             <div>
               <h2 className="text-sm font-bold font-mono uppercase tracking-wider text-white">
@@ -277,7 +277,7 @@ export function GarmentScannerModal({
                   onClick={handleStartScan}
                   className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold font-mono text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-2"
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <Crosshair className="w-4 h-4" />
                   <span>Run Client-Side Vision Scan</span>
                 </button>
               </div>
@@ -291,7 +291,7 @@ export function GarmentScannerModal({
             <div className="relative w-16 h-16 flex items-center justify-center">
               <div className="absolute inset-0 rounded-full border-2 border-amber-500/20 animate-ping" />
               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-xl">
-                <Sparkles className="w-6 h-6 animate-spin" />
+                <RefreshCw className="w-6 h-6 animate-spin" />
               </div>
             </div>
 

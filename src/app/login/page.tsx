@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { registerNewActiveSession } from '@/lib/supabase/session';
 import {
   ShieldCheck,
-  Sparkles,
+  Crosshair,
   Lock,
   Mail,
   ArrowRight,
@@ -108,7 +108,7 @@ function LoginForm() {
       {/* Header Brand */}
       <div className="z-10 mb-8 text-center flex flex-col items-center">
         <div className="flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4 backdrop-blur-md">
-          <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+          <Crosshair className="w-4 h-4 text-amber-400 animate-pulse" />
           <span className="text-xs uppercase tracking-widest text-zinc-400 font-mono">
             Zero-API Web Vault
           </span>

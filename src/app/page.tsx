@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import {
   ArrowRight,
-  Sparkles,
   Shield,
   Cpu,
   Layers,
@@ -57,7 +56,7 @@ export default function HomePage() {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-16 pb-20 text-center z-10 flex flex-col items-center">
         {/* Architecture Badges */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-amber-400 font-mono mb-6 backdrop-blur-md">
-          <Sparkles className="w-3.5 h-3.5" />
+          <Crosshair className="w-3.5 h-3.5" />
           <span>Zero-API Browser AI &bull; Strict Texture Lock &bull; Supabase RLS</span>
         </div>
 
