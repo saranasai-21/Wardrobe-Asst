@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'VaultStyle | Tactical Fashion Studio & AI Wardrobe Vault',
+  title: 'WardrobeLab | Tactical Fashion Studio & Personal Wardrobe Vault',
   description:
     'Production-grade browser-native fashion designer, full-body avatar fitting stage, and deterministic outfit curation engine.',
 };

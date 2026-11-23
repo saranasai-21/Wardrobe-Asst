@@ -194,16 +194,16 @@ export function AvatarStage({
         }
       }
 
-      // Add VaultStyle watermark
+      // Add WardrobeLab watermark
       ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
       ctx.font = 'bold 20px monospace';
-      ctx.fillText('VAULTSTYLE STUDIO // ' + new Date().toLocaleDateString(), 40, stageHeight - 40);
+      ctx.fillText('WARDROBELAB STUDIO // ' + new Date().toLocaleDateString(), 40, stageHeight - 40);
 
       // Trigger download
       const dataUrl = canvas.toDataURL('image/png');
       const a = document.createElement('a');
       a.href = dataUrl;
-      a.download = `VaultStyle_Look_${Date.now()}.png`;
+      a.download = `WardrobeLab_Look_${Date.now()}.png`;
       a.click();
 
       confetti({
@@ -307,13 +307,15 @@ export function AvatarStage({
             </>
           )}
 
-          <button
-            onClick={onOpenAvatarUpload}
-            className="p-1.5 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white transition-colors flex items-center gap-1.5 text-[11px] font-mono border border-white/5"
-          >
-            <User className="w-3.5 h-3.5 text-amber-400" />
-            <span>{avatar ? 'Change Avatar' : 'Upload Avatar'}</span>
-          </button>
+          {!avatar && (
+            <button
+              onClick={onOpenAvatarUpload}
+              className="p-1.5 px-2.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition-colors flex items-center gap-1.5 text-[11px] font-mono"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Set Avatar</span>
+            </button>
+          )}
         </div>
       </div>
 

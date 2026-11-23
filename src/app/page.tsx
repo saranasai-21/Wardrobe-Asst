@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 import {
   ArrowRight,
   Shield,
@@ -26,14 +27,9 @@ export default function HomePage() {
 
       {/* Navigation */}
       <nav className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between z-20 border-b border-white/5 sticky top-0 bg-[#09090B]/80 backdrop-blur-xl">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-zinc-950 font-black text-lg shadow-lg shadow-amber-500/20">
-            V
-          </div>
-          <span className="text-xl font-black font-mono tracking-wider text-white">
-            VAULT<span className="text-amber-400">STYLE</span>
-          </span>
-        </div>
+        <Link href="/">
+          <Logo size="md" />
+        </Link>
 
         <div className="flex items-center gap-3 sm:gap-4">
           <Link
@@ -98,7 +94,7 @@ export default function HomePage() {
               <div className="w-3 h-3 rounded-full bg-amber-500/80" />
               <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
               <span className="ml-2 text-xs font-mono text-zinc-500">
-                vaultstyle.studio // split-screen viewport
+                wardrobelab.studio // split-screen viewport
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs font-mono text-amber-400">
@@ -331,7 +327,7 @@ export default function HomePage() {
             Execution Flow
           </p>
           <h2 className="text-2xl sm:text-4xl font-black font-mono text-white mt-1">
-            HOW VAULTSTYLE WORKS
+            HOW WARDROBELAB WORKS
           </h2>
         </div>
 
@@ -380,7 +376,7 @@ export default function HomePage() {
 
       {/* FOOTER */}
       <footer className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 font-mono z-10">
-        <div>VaultStyle &copy; 2026 &bull; Production Personal Fashion Architecture</div>
+        <div>WardrobeLab &copy; 2026 &bull; Production Personal Fashion Architecture</div>
         <div className="mt-3 sm:mt-0 flex items-center gap-4">
           <Link href="/vault" className="text-zinc-400 hover:text-white transition-colors">
             Vault Studio

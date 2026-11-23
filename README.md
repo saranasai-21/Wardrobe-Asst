@@ -1,4 +1,4 @@
-# VaultStyle: Production-Grade Personal Fashion Designer Web App
+# WardrobeLab: Production-Grade Personal Fashion Designer Web App
 
 A high-craft, dark-mode web application inspired by the **Free Fire character customization Vault** paradigm. Features a full-body interactive avatar studio, zero-distortion client-side garment scanner, real-time pose anchor calibration, and a deterministic color-theory outfit curation engine.
 

@@ -4,6 +4,7 @@ import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { registerNewActiveSession } from '@/lib/supabase/session';
+import { Logo } from '@/components/Logo';
 import {
   ShieldCheck,
   Crosshair,
@@ -113,16 +114,11 @@ function LoginForm() {
             Zero-API Web Vault
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-zinc-950 shadow-lg shadow-amber-500/20 font-black text-xl">
-            V
-          </div>
-          <h1 className="text-3xl font-black tracking-tight text-white font-mono">
-            VAULT<span className="text-amber-400">STYLE</span>
-          </h1>
+        <div className="mb-1">
+          <Logo size="lg" />
         </div>
         <p className="text-sm text-zinc-400 mt-2 max-w-sm">
-          Interactive full-body fashion studio & deterministic outfit curation.
+          Interactive full-body fashion studio &amp; deterministic outfit curation.
         </p>
       </div>
 
@@ -205,7 +201,7 @@ function LoginForm() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="designer@vaultstyle.io"
+                placeholder="designer@wardrobelab.io"
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-zinc-950/60 border border-white/10 text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-amber-400/80 transition-colors"
               />
             </div>

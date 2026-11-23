@@ -33,6 +33,8 @@ import { AvatarStage } from '@/components/AvatarStage';
 import { WardrobeVault } from '@/components/WardrobeVault';
 import { AvatarUploadModal } from '@/components/AvatarUploadModal';
 import { GarmentScannerModal } from '@/components/GarmentScannerModal';
+import { SettingsModal } from '@/components/SettingsModal';
+import { InitialAvatarDialog } from '@/components/InitialAvatarDialog';
 import { OnboardingGuide } from '@/components/OnboardingGuide';
 import { SessionGuard } from '@/components/SessionGuard';
 import { RefreshCw, Zap, AlertCircle } from 'lucide-react';
@@ -53,6 +55,8 @@ export default function VaultPage() {
   // Modals
   const [scannerOpen, setScannerOpen] = useState<boolean>(false);
   const [avatarModalOpen, setAvatarModalOpen] = useState<boolean>(false);
+  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+  const [initialAvatarOpen, setInitialAvatarOpen] = useState<boolean>(false);
   const [notification, setNotification] = useState<string | null>(null);
 
   const showNotification = (msg: string) => {
@@ -83,7 +87,7 @@ export default function VaultPage() {
           // If no session, set guest/demo user ID
           if (isMounted) {
             setUserId(uid);
-            setUserEmail('designer@vaultstyle.io');
+            setUserEmail('designer@wardrobelab.io');
           }
         }
 
@@ -98,6 +102,9 @@ export default function VaultPage() {
           setAvatar(activeAv);
           setWardrobe(items);
           setSavedOutfits(outfits);
+          if (!activeAv) {
+            setInitialAvatarOpen(true);
+          }
         }
       } catch (err) {
         console.error('Failed to initialize vault:', err);
@@ -395,7 +402,7 @@ export default function VaultPage() {
       <Navbar
         userEmail={userEmail}
         onOpenScanner={() => setScannerOpen(true)}
-        onOpenAvatarUpload={() => setAvatarModalOpen(true)}
+        onOpenSettings={() => setSettingsOpen(true)}
       />
 
       {/* Floating Notification Toast */}
@@ -425,7 +432,7 @@ export default function VaultPage() {
               equippedItems={equippedItems}
               onUnequip={handleUnequipItem}
               onClearAll={handleClearAllEquipped}
-              onOpenAvatarUpload={() => setAvatarModalOpen(true)}
+              onOpenAvatarUpload={() => setInitialAvatarOpen(true)}
               onUpdateItemFit={handleUpdateItemFit}
               onUseMannequin={handleUseMannequin}
             />
@@ -450,6 +457,31 @@ export default function VaultPage() {
       </main>
 
       {/* Modals */}
+      {/* 1. Initial Avatar Choice Dialog (First-time user onboarding) */}
+      <InitialAvatarDialog
+        isOpen={initialAvatarOpen && !avatar}
+        onOpenUpload={() => {
+          setInitialAvatarOpen(false);
+          setAvatarModalOpen(true);
+        }}
+        onSelectMannequin={() => {
+          setInitialAvatarOpen(false);
+          handleUseMannequin();
+        }}
+      />
+
+      {/* 2. Studio Settings Modal (Change avatar, preferences, account) */}
+      <SettingsModal
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        avatar={avatar}
+        userEmail={userEmail}
+        onOpenAvatarUpload={() => setAvatarModalOpen(true)}
+        onUseMannequin={handleUseMannequin}
+        onClearEquipped={handleClearAllEquipped}
+      />
+
+      {/* 3. Avatar Upload & MediaPipe Calibration Modal */}
       <AvatarUploadModal
         userId={userId}
         isOpen={avatarModalOpen}
@@ -457,6 +489,7 @@ export default function VaultPage() {
         onSaveAvatar={handleSaveAvatar}
       />
 
+      {/* 4. Garment Scanner Modal */}
       <GarmentScannerModal
         userId={userId}
         isOpen={scannerOpen}
